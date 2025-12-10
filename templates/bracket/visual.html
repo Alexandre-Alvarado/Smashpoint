@@ -1,0 +1,232 @@
+{% extends 'base.html' %}
+{% block title %}Bracket Visual - {{ torneo.nombre }}{% endblock %}
+{% block content %}
+<style>
+  .bracket-container {
+    overflow-x: auto;
+    padding: 40px 20px;
+    background: #f8f9fa; /* paleta anterior neutra */
+    border-radius: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #e9ecef;
+  }
+
+  .bracket-wrapper {
+    display: flex;
+    flex-direction: row-reverse;
+    gap: 40px;
+    min-width: fit-content;
+    align-items: flex-start;
+  }
+
+  .bracket-round {
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    gap: 20px;
+  }
+
+  .bracket-round-title {
+    text-align: center;
+    font-weight: bold;
+    color: white;
+    background: #0d6efd; /* azul bootstrap clásico */
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    font-size: 0.95rem;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  }
+
+  .match-card {
+    background: white;
+    border: 2px solid #dee2e6;
+    border-radius: 8px;
+    padding: 12px;
+    min-width: 280px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    transition: all 0.3s ease;
+  }
+
+  .match-card:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    transform: translateY(-2px);
+  }
+
+  .match-card.completed {
+    border-color: #198754;
+    background: #d1e7dd; /* verde suave de la paleta anterior */
+  }
+
+  .match-player {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid #eee;
+  }
+
+  .match-player:last-child {
+    border-bottom: none;
+  }
+
+  .player-name {
+    font-weight: 500;
+    color: #333;
+    flex-grow: 1;
+  }
+
+  .player-score {
+    background: #333;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-weight: bold;
+    min-width: 40px;
+    text-align: center;
+    font-size: 0.9rem;
+  }
+
+  .match-info {
+    font-size: 0.85rem;
+    color: #666;
+    margin-top: 8px;
+    text-align: center;
+  }
+
+  .match-result {
+    margin-top: 8px;
+    padding: 8px;
+    background: #cfead6;
+    border-left: 3px solid #198754;
+    border-radius: 3px;
+    font-weight: bold;
+    color: #0f5132;
+    text-align: center;
+  }
+
+  .match-action {
+    margin-top: 8px;
+  }
+
+  .pending-badge {
+    display: inline-block;
+    background: #ffc107;
+    color: #212529;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    font-weight: bold;
+  }
+
+  .round-stats {
+    text-align: center;
+    font-size: 0.8rem;
+    color: #666;
+    margin-top: 5px;
+  }
+
+  @media (max-width: 768px) {
+    .bracket-wrapper {
+      gap: 20px;
+    }
+    .match-card {
+      min-width: 250px;
+      padding: 10px;
+    }
+  }
+</style>
+
+<div class="mb-4">
+  <h2 class="h3 mb-1">🏆 Bracket de Eliminación - {{ torneo.nombre }}</h2>
+  <p class="text-muted">Torneo profesional con eliminación directa</p>
+</div>
+
+<div class="alert alert-info mb-4" role="alert">
+  <strong>📊 Estadísticas del Bracket:</strong> 
+  {% if rondas %}
+    {% with rondas|length as num_rondas %}
+    <span class="badge bg-primary ms-2">{{ num_rondas }} ronda(s)</span>
+    {% endwith %}
+    {% with rondas.0.1|length as first_round_matches %}
+    <span class="badge bg-success ms-2">{{ first_round_matches }} partidos iniciales</span>
+    {% endwith %}
+  {% endif %}
+  <br>
+  <small class="mt-2">Scroll horizontalmente para ver todo el bracket</small>
+</div>
+
+<div class="bracket-container">
+  <div class="bracket-wrapper">
+    {% for ronda, plist in rondas %}
+      <div class="bracket-round">
+        <div class="bracket-round-title">
+          {% if plist.0.etapa == 'FINAL' %}
+            🥇 FINAL
+          {% elif ronda == 1 %}
+            {% if plist|length == 32 %}
+              Round of 64
+            {% elif plist|length == 16 %}
+              Round of 32
+            {% elif plist|length == 8 %}
+              Round of 16
+            {% elif plist|length == 4 %}
+              🏆 Cuartos
+            {% elif plist|length == 2 %}
+              🥈 Semis
+            {% else %}
+              Ronda {{ ronda }}
+            {% endif %}
+          {% else %}
+            Ronda {{ ronda }}
+          {% endif %}
+          <div class="round-stats">{{ plist|length }} partido(s)</div>
+        </div>
+
+        {% for p in plist %}
+          <div class="match-card {% if p.ganador %}completed{% endif %}">
+            <div class="match-player">
+              <span class="player-name">{{ p.jugador_a }}</span>
+              <span class="player-score">
+                {% if p.sets_a is not None %}{{ p.sets_a }}{% else %}-{% endif %}
+              </span>
+            </div>
+            <div class="match-player">
+              <span class="player-name">{{ p.jugador_b }}</span>
+              <span class="player-score">
+                {% if p.sets_b is not None %}{{ p.sets_b }}{% else %}-{% endif %}
+              </span>
+            </div>
+
+            <div class="match-info">
+              <strong>Best of {{ p.best_of }}</strong>
+              {% if p.sets_a is None %}
+                <br><span class="pending-badge">⏳ Pendiente</span>
+              {% endif %}
+            </div>
+
+            {% if p.ganador %}
+              <div class="match-result">
+                ✓ Ganador: {{ p.ganador }}
+              </div>
+            {% else %}
+              <div class="match-action">
+                <a href="{% url 'editar_partido' p.id %}" class="btn btn-sm btn-primary w-100" style="font-size: 0.85rem;">
+                  ✏️ Cargar Resultado
+                </a>
+              </div>
+            {% endif %}
+          </div>
+        {% endfor %}
+      </div>
+    {% endfor %}
+  </div>
+</div>
+
+<div class="mt-4">
+  <a href="{% url 'lista_partidos' torneo.id %}" class="btn btn-outline-secondary btn-lg">
+    ← Volver a Partidos
+  </a>
+</div>
+{% endblock %}

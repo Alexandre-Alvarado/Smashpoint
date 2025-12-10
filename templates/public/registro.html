@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% block title %}Registro de Jugadores - SmashPoint{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-5">
+    <div class="card shadow-sm">
+      <div class="card-header py-2"><strong>Crear cuenta de jugador</strong></div>
+      <div class="card-body">
+        <form method="post" class="mb-2">
+          {% csrf_token %}
+          <div class="mb-3">
+            <label class="form-label">Usuario</label>
+            <input type="text" name="username" class="form-control" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Contraseña</label>
+            <input type="password" name="password" class="form-control" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Nombre</label>
+            <input type="text" name="first_name" class="form-control">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Apellido</label>
+            <input type="text" name="last_name" class="form-control">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">RUT</label>
+            <input type="text" name="rut" placeholder="12.345.678-5" class="form-control">
+            <div class="form-text">Formato chileno con dígito verificador.</div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Categoría</label>
+            <select name="categoria" class="form-select">
+              <option value="AMATEUR">Amateur</option>
+              <option value="FEDERADO">Federado</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Origen (Ciudad / Región)</label>
+            <input type="text" name="origen" class="form-control" placeholder="Ej: Santiago, Valparaíso">
+          </div>
+          <button type="submit" class="btn btn-primary w-100">Registrarme</button>
+        </form>
+        <div class="text-center">
+          <a class="btn btn-outline-secondary btn-sm" href="{% url 'ranking_public' %}">Ver ranking</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

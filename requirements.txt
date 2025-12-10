@@ -1,0 +1,21 @@
+# SmashPoint - Dependencias del Proyecto
+# Instalación: pip install -r requirements.txt
+
+# Framework principal
+Django==4.2.7
+
+# Base de datos
+mysqlclient==2.2.7
+qrcode==7.4.2
+djangorestframework==3.14.0
+reportlab==4.0.9
+openpyxl==3.1.2
+
+# Testing y cobertura
+coverage==7.3.2
+pytest==7.4.3
+pytest-django==4.7.0
+pytest-cov==4.1.0
+
+# Herramientas de desarrollo (opcional)
+django-debug-toolbar==4.2.0

@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block title %}Inicio - SmashPoint{% endblock %}
+{% block content %}
+    <div class="row align-items-center mb-4">
+        <div class="col-md-8">
+            <h2 class="fw-bold display-6">Bienvenido a SmashPoint</h2>
+            <p class="lead">Gestiona jugadores, torneos y ranking de bádminton con una interfaz moderna y profesional.</p>
+            <div class="d-flex gap-2 flex-wrap">
+                <a href="{% url 'lista_jugadores' %}" class="btn btn-primary">👥 Jugadores</a>
+                <a href="{% url 'lista_torneos' %}" class="btn btn-outline-primary">🏓 Torneos</a>
+                <a href="{% url 'ranking_public' %}" class="btn btn-success">🏆 Ranking</a>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">Estado Rápido</h5>
+                    <ul class="list-unstyled small mb-0">
+                        <li>🎯 Torneos activos: <strong>{{ torneos_activos|default:'-' }}</strong></li>
+                        <li>👥 Jugadores registrados: <strong>{{ jugadores_total|default:'-' }}</strong></li>
+                        <li>🏆 Último campeón: <strong>{{ ultimo_campeon|default:'N/D' }}</strong></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

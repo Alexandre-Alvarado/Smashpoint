@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block title %}Ranking Público - SmashPoint{% endblock %}
+{% block content %}
+<h2 class="h4 mb-3">Ranking de Jugadores</h2>
+<div class="card shadow-sm">
+  <div class="card-body p-0">
+    <table class="table table-sm mb-0 align-middle">
+      <thead class="table-light">
+        <tr>
+          <th style="width:60px">#</th>
+          <th>Jugador</th>
+          <th class="text-end" style="width:120px">Puntos</th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for r in ranking %}
+        <tr>
+          <td>{{ forloop.counter }}</td>
+          <td>{{ r.jugador.nombre }} {{ r.jugador.apellido }}</td>
+          <td class="text-end"><span class="badge bg-dark">{{ r.puntos }} pts</span></td>
+        </tr>
+      {% empty %}
+        <tr><td colspan="3" class="text-center text-muted">Sin datos de ranking.</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

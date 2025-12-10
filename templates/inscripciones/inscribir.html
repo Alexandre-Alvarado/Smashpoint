@@ -1,0 +1,154 @@
+{% extends 'base.html' %}
+{% block title %}Inscribir Jugadores - {{ torneo.nombre }}{% endblock %}
+{% block content %}
+<div class="row g-3">
+  <div class="col-lg-8">
+    <div class="card shadow-sm">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <div>
+          <strong>Inscribir jugadores en {{ torneo.nombre }}</strong>
+          <div class="small text-muted">Selecciona uno o varios y confirma.</div>
+        </div>
+        <span class="badge bg-secondary">{{ torneo.categoria }}</span>
+      </div>
+      <div class="card-body">
+        <form method="post" class="vstack gap-3">
+          {% csrf_token %}
+          <div class="row g-2 align-items-end">
+            <div class="col-md-6">
+              <label class="form-label">Buscar</label>
+              <input type="text" id="buscador" class="form-control" placeholder="Nombre o apellido">
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Categoría jugador</label>
+              <select id="filtroCat" class="form-select">
+                <option value="">Todas</option>
+                <option value="AMATEUR">Amateur</option>
+                <option value="FEDERADO">Federado</option>
+              </select>
+            </div>
+            <div class="col-md-2 d-flex gap-2">
+              <button type="button" id="btnSelectAll" class="btn btn-outline-primary w-100">Todos</button>
+              <button type="button" id="btnClear" class="btn btn-outline-secondary w-100">Limpiar</button>
+            </div>
+          </div>
+          <div class="border rounded p-2" style="max-height: 360px; overflow-y: auto;">
+            {% for j in jugadores %}
+            <label class="d-flex justify-content-between align-items-center py-1 px-2 hover-bg"
+                   data-nombre="{{ j.nombre|lower }} {{ j.apellido|lower }}"
+                   data-cat="{{ j.categoria }}">
+              <div>
+                <input class="form-check-input me-2 chk-jugador" type="checkbox" name="jugadores" value="{{ j.id }}">
+                <span class="fw-semibold">{{ j.nombre }} {{ j.apellido }}</span>
+                <small class="text-muted ms-2">{{ j.categoria }}</small>
+              </div>
+              {% if j.origen %}<small class="text-muted">{{ j.origen }}</small>{% endif %}
+            </label>
+            {% empty %}
+            <div class="text-center text-muted py-3">No hay jugadores registrados.</div>
+            {% endfor %}
+          </div>
+          <div class="d-flex justify-content-between align-items-center">
+            <div class="small text-muted" id="contadorSelec">0 seleccionados</div>
+            <button type="submit" class="btn btn-success" {% if cupos_disponibles <= 0 %}disabled{% endif %}>
+              Inscribir seleccionados
+            </button>
+          </div>
+          {% if cupos_disponibles <= 0 %}
+          <div class="alert alert-warning small mb-0">⚠️ Sin cupos disponibles. El torneo está lleno.</div>
+          {% endif %}
+        </form>
+      </div>
+      <div class="card-footer text-end">
+        <a class="btn btn-outline-secondary btn-sm" href="{% url 'lista_inscripciones' torneo.id %}">Volver</a>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-4">
+    <div class="alert alert-info">
+      <div class="d-flex align-items-center gap-2 mb-1">
+        <span class="badge bg-secondary">Torneo</span>
+        <span class="fw-semibold">{{ torneo.categoria }}</span>
+      </div>
+      <div class="small text-muted">Fecha: {{ torneo.fecha }} · Cupos máx: {{ torneo.cupos_max }}</div>
+      <div class="mt-2 pt-2 border-top">
+        <div class="small">
+          <strong>Cupos disponibles:</strong>
+          <span class="badge {% if cupos_disponibles > 0 %}bg-success{% else %}bg-danger{% endif %}">
+            {{ cupos_disponibles }}
+          </span>
+        </div>
+        <div class="small text-muted mt-1">Inscritos: {{ inscritos_actuales }}</div>
+      </div>
+      <div class="small text-muted mt-2">Selecciona por categoría de jugador para inscribir rápido.</div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script>
+// Filtro, selección múltiple y acciones rápidas
+document.addEventListener('DOMContentLoaded', function() {
+  const search = document.getElementById('buscador');
+  const filtroCat = document.getElementById('filtroCat');
+  const checks = Array.from(document.querySelectorAll('.chk-jugador'));
+  const btnAll = document.getElementById('btnSelectAll');
+  const btnClear = document.getElementById('btnClear');
+  const contador = document.getElementById('contadorSelec');
+  const cuposDisponibles = parseInt('{{ cupos_disponibles }}', 10);
+
+  function updateCounter() {
+    const count = checks.filter(c => c.checked && c.closest('label').style.display !== 'none').length;
+    contador.textContent = `${count} seleccionados`;
+    // Deshabilitar más si alcanzamos el cupo
+    if (count >= cuposDisponibles && cuposDisponibles > 0) {
+      checks.forEach(c => {
+        if (!c.checked && c.closest('label').style.display !== 'none') {
+          c.disabled = true;
+        }
+      });
+    } else {
+      checks.forEach(c => c.disabled = false);
+    }
+  }
+
+  function aplicarFiltro() {
+    const term = (search.value || '').toLowerCase();
+    const cat = filtroCat.value;
+    checks.forEach(c => {
+      const row = c.closest('label');
+      const matchNombre = row.dataset.nombre.includes(term);
+      const matchCat = !cat || row.dataset.cat === cat;
+      row.style.display = (matchNombre && matchCat) ? '' : 'none';
+    });
+    updateCounter();
+  }
+
+  search.addEventListener('input', aplicarFiltro);
+  filtroCat.addEventListener('change', aplicarFiltro);
+  checks.forEach(c => c.addEventListener('change', updateCounter));
+
+  btnAll.addEventListener('click', (e) => {
+    e.preventDefault();
+    let seleccionados = 0;
+    checks.forEach(c => {
+      if (c.closest('label').style.display !== 'none' && !c.disabled) {
+        if (seleccionados < cuposDisponibles) {
+          c.checked = true;
+          seleccionados++;
+        }
+      }
+    });
+    updateCounter();
+  });
+
+  btnClear.addEventListener('click', (e) => {
+    e.preventDefault();
+    checks.forEach(c => c.checked = false);
+    updateCounter();
+  });
+
+  aplicarFiltro();
+});
+</script>
+{% endblock %}

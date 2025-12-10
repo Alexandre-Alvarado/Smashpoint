@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% block title %}Jugador {{ jugador }} - SmashPoint{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+	<h2 class="h4 mb-0">Perfil Público: {{ jugador.nombre }} {{ jugador.apellido }}</h2>
+	<a href="{% url 'ranking_public' %}" class="btn btn-outline-secondary btn-sm">← Ranking</a>
+  
+</div>
+
+<div class="row g-3 mb-4">
+	<div class="col-md-4">
+		<div class="card shadow-sm h-100">
+			<div class="card-body">
+				<div class="d-flex align-items-center justify-content-between">
+					<div>
+						<div class="text-muted small">Categoría</div>
+						<div class="fw-semibold">{{ jugador.categoria }}</div>
+					</div>
+					<span class="badge bg-primary">{% if ranking %}{{ ranking.puntos }} pts{% else %}0 pts{% endif %}</span>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="col-md-8">
+		<div class="card shadow-sm h-100">
+			<div class="card-header py-2"><strong>Resumen</strong></div>
+			<div class="card-body">
+				<div class="row text-center">
+					<div class="col">
+						<div class="text-muted small">Torneos</div>
+						<div class="fw-semibold">{{ partidos|length }}</div>
+					</div>
+					<div class="col">
+						<div class="text-muted small">Último torneo</div>
+						<div class="fw-semibold">{% with ult=partidos|first %}{% if ult %}{{ ult.torneo.nombre }}{% else %}-{% endif %}{% endwith %}</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="card shadow-sm">
+	<div class="card-header py-2"><strong>Partidos</strong></div>
+	<div class="card-body p-0">
+		<table class="table table-sm mb-0 align-middle">
+			<thead class="table-light">
+				<tr>
+					<th>Torneo</th>
+					<th>Rival</th>
+					<th class="text-center" style="width:120px">Marcador</th>
+				</tr>
+			</thead>
+			<tbody>
+			{% for p in partidos %}
+				<tr>
+					<td>{{ p.torneo.nombre }}</td>
+					<td>{% if p.jugador1 == jugador %}{{ p.jugador2 }}{% else %}{{ p.jugador1 }}{% endif %}</td>
+					<td class="text-center">
+						<span class="badge bg-{% if p.marcador_j1 > p.marcador_j2 and p.jugador1 == jugador or p.marcador_j2 > p.marcador_j1 and p.jugador2 == jugador %}success{% else %}secondary{% endif %}">
+							{{ p.marcador_j1 }} - {{ p.marcador_j2 }}
+						</span>
+					</td>
+				</tr>
+			{% empty %}
+				<tr><td colspan="3" class="text-center text-muted">Sin partidos.</td></tr>
+			{% endfor %}
+			</tbody>
+		</table>
+	</div>
+</div>
+
+<a href="{% url 'scoreboard_public' %}" class="btn btn-link mt-3">← Volver al scoreboard</a>
+{% endblock %}

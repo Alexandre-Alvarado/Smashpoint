@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block title %}Modo Offline - SmashPoint{% endblock %}
+{% block content %}
+<div class="text-center py-5">
+	<h2 class="mb-3">⚠️ Estás Offline</h2>
+	<p class="lead">No hay conexión con el servidor. Algunas funciones están limitadas.</p>
+	<div class="card mx-auto mt-4 shadow-soft" style="max-width:480px;">
+		<div class="card-body">
+			<p class="mb-2">Puedes seguir consultando contenido cacheado. Para restaurar todas las funciones:</p>
+			<ol class="text-start small">
+				<li>Verifica tu red / Wi‑Fi</li>
+				<li>Recarga la página (Ctrl+R)</li>
+				<li>Si persiste, limpia caché de la PWA</li>
+			</ol>
+			<button class="btn btn-primary" onclick="location.reload()">🔄 Reintentar Conexión</button>
+		</div>
+	</div>
+	<p class="mt-4 text-muted small">Esta vista se muestra gracias al Service Worker.</p>
+</div>
+{% endblock %}

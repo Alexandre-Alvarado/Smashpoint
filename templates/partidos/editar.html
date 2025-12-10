@@ -1,0 +1,238 @@
+{% extends 'base.html' %}
+{% block title %}Editar Partido{% endblock %}
+{% block content %}
+<div class="container-fluid mt-4 mb-4">
+  <div class="row mb-4">
+    <div class="col-12">
+      <h1 class="h3 mb-0" style="color: #2c3e50;">📊 Editar Partido</h1>
+      <small class="text-muted">Torneo: <strong>{{ partido.torneo.nombre }}</strong> | Etapa: <strong>{{ partido.etapa }}</strong></small>
+    </div>
+  </div>
+
+  <div class="row mb-4">
+    <div class="col-lg-8">
+      <form method="POST" class="card shadow-lg border-0" id="formPartido">
+        {% csrf_token %}
+        <div class="card-header bg-primary text-white">
+          <h5 class="mb-0">⚙️ Información del Partido</h5>
+        </div>
+        <div class="card-body">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label fw-bold">Torneo</label>
+              {{ form.torneo }}
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-bold">Etapa</label>
+              {{ form.etapa }}
+            </div>
+            <div class="col-md-4">
+              <label class="form-label fw-bold">Grupo</label>
+              {{ form.grupo }}
+              <div class="form-text">Ej: A, B, C</div>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label fw-bold">Ronda</label>
+              {{ form.ronda }}
+            </div>
+            <div class="col-md-4">
+              <label class="form-label fw-bold">Best of</label>
+              {{ form.best_of }}
+              <div class="form-text">3 o 5 sets</div>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-bold">Jugador A</label>
+              <div class="input-group">
+                <span class="input-group-text">🎾</span>
+                {{ form.jugador_a }}
+              </div>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-bold">Jugador B</label>
+              <div class="input-group">
+                <span class="input-group-text">🎾</span>
+                {{ form.jugador_b }}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card shadow-lg border-0 mt-4">
+          <div class="card-header bg-success text-white">
+            <h5 class="mb-0">📝 Detalles de Sets</h5>
+          </div>
+          <div class="card-body">
+            <div class="alert alert-info border-0" role="alert">
+              <strong>💡 Tip:</strong> Completa el "Detalle de sets" con el formato <code>11-7,8-11,11-9</code> y se calcularán automáticamente los sets ganados y el ganador.
+            </div>
+
+            <div class="row g-3">
+              <div class="col-12">
+                <label class="form-label fw-bold">Detalle de Sets</label>
+                {{ form.detalle_sets }}
+                <div class="form-text">Ej: <code>11-7,8-11,11-9</code> (separados por coma)</div>
+              </div>
+
+              <div class="col-md-6">
+                <div class="card border-primary h-100">
+                  <div class="card-body">
+                    <label class="form-label fw-bold text-primary">🏆 Sets ganados - Jugador A</label>
+                    <div class="input-group input-group-lg">
+                      <span class="input-group-text">🎯</span>
+                      <input type="number" class="form-control text-center fw-bold" name="sets_a" min="0" value="{{ form.sets_a.value|default:'' }}" id="id_sets_a" style="font-size: 1.5rem;">
+                    </div>
+                    {% if form.sets_a.errors %}<div class="text-danger small mt-2"><strong>⚠️</strong> {{ form.sets_a.errors.0 }}</div>{% endif %}
+                    <div class="form-text mt-2">Mínimo: 0 | Máximo: <span id="maxSetsDisplay">2</span></div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-6">
+                <div class="card border-secondary h-100">
+                  <div class="card-body">
+                    <label class="form-label fw-bold text-secondary">🏆 Sets ganados - Jugador B</label>
+                    <div class="input-group input-group-lg">
+                      <span class="input-group-text">🎯</span>
+                      <input type="number" class="form-control text-center fw-bold" name="sets_b" min="0" value="{{ form.sets_b.value|default:'' }}" id="id_sets_b" style="font-size: 1.5rem;">
+                    </div>
+                    {% if form.sets_b.errors %}<div class="text-danger small mt-2"><strong>⚠️</strong> {{ form.sets_b.errors.0 }}</div>{% endif %}
+                    <div class="form-text mt-2">Mínimo: 0 | Máximo: <span id="maxSetsDisplay2">2</span></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card shadow-lg border-0 mt-4" id="cardMarcador" style="display: none;">
+          <div class="card-header bg-warning text-dark">
+            <h5 class="mb-0">📌 Marcador (Sin Sets)</h5>
+          </div>
+          <div class="card-body">
+            <div class="row g-3">
+              <div class="col-md-6">
+                <div class="card border-primary h-100">
+                  <div class="card-body">
+                    <label class="form-label fw-bold text-primary">Marcador - Jugador A</label>
+                    <div class="input-group input-group-lg">
+                      <span class="input-group-text">🏐</span>
+                      <input type="number" class="form-control text-center fw-bold" name="marcador_a" min="0" value="{{ form.marcador_a.value|default:'' }}" id="id_marcador_a" style="font-size: 1.5rem;">
+                    </div>
+                    {% if form.marcador_a.errors %}<div class="text-danger small mt-2"><strong>⚠️</strong> {{ form.marcador_a.errors.0 }}</div>{% endif %}
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="card border-secondary h-100">
+                  <div class="card-body">
+                    <label class="form-label fw-bold text-secondary">Marcador - Jugador B</label>
+                    <div class="input-group input-group-lg">
+                      <span class="input-group-text">🏐</span>
+                      <input type="number" class="form-control text-center fw-bold" name="marcador_b" min="0" value="{{ form.marcador_b.value|default:'' }}" id="id_marcador_b" style="font-size: 1.5rem;">
+                    </div>
+                    {% if form.marcador_b.errors %}<div class="text-danger small mt-2"><strong>⚠️</strong> {{ form.marcador_b.errors.0 }}</div>{% endif %}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="d-grid gap-2 mt-4">
+          <button class="btn btn-success btn-lg" type="submit">
+            <strong>✅ Guardar Cambios</strong>
+          </button>
+        </div>
+      </form>
+      <a href="{% url 'lista_partidos' partido.torneo.id %}" class="btn btn-outline-secondary btn-lg w-100 mt-3">
+        ← Volver a Partidos
+      </a>
+    </div>
+
+    <div class="col-lg-4">
+      <div class="card shadow-lg border-0 sticky-top" style="top: 20px;">
+        <div class="card-header bg-info text-white">
+          <h5 class="mb-0">ℹ️ Guía Rápida</h5>
+        </div>
+        <div class="card-body">
+          <div class="mb-3">
+            <h6 class="fw-bold">📊 Best of 3</h6>
+            <p class="small mb-0">El máximo de sets por jugador es <span class="badge bg-primary">2</span></p>
+          </div>
+          <div class="mb-3">
+            <h6 class="fw-bold">📊 Best of 5</h6>
+            <p class="small mb-0">El máximo de sets por jugador es <span class="badge bg-success">3</span></p>
+          </div>
+          <hr>
+          <div class="mb-3">
+            <h6 class="fw-bold">✏️ Opción 1: Detalle Sets</h6>
+            <p class="small mb-0">Ingresa los puntos de cada set separados por coma. Ej:</p>
+            <code class="small">11-7,8-11,11-9</code>
+          </div>
+          <div>
+            <h6 class="fw-bold">✏️ Opción 2: Marcador</h6>
+            <p class="small mb-0">Ingresa solo el marcador si no usas sets.</p>
+          </div>
+          <div class="alert alert-warning mt-3 mb-0">
+            <small><strong>⚠️ Nota:</strong> Solo usa una opción: o Detalle Sets o Marcador.</small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const bestOfInput = document.getElementById('id_best_of');
+  const setsAInput = document.getElementById('id_sets_a');
+  const setsBInput = document.getElementById('id_sets_b');
+  const cardMarcador = document.getElementById('cardMarcador');
+  const maxSetsDisplay = document.getElementById('maxSetsDisplay');
+  const maxSetsDisplay2 = document.getElementById('maxSetsDisplay2');
+
+  function updateVisibilityAndLimits() {
+    const bestOf = parseInt(bestOfInput.value || '1', 10);
+    const usaSets = bestOf > 1;
+    const maxSets = bestOf > 1 ? Math.floor((bestOf + 1) / 2) : 0;
+    
+    cardMarcador.style.display = usaSets ? 'none' : '';
+    maxSetsDisplay.textContent = maxSets;
+    maxSetsDisplay2.textContent = maxSets;
+    
+    if (usaSets) {
+      setsAInput.setAttribute('max', maxSets);
+      setsBInput.setAttribute('max', maxSets);
+    } else {
+      setsAInput.removeAttribute('max');
+      setsBInput.removeAttribute('max');
+    }
+  }
+
+  updateVisibilityAndLimits();
+  bestOfInput.addEventListener('change', updateVisibilityAndLimits);
+  
+  document.getElementById('formPartido').addEventListener('submit', function(e) {
+    const bestOf = parseInt(bestOfInput.value || '1', 10);
+    const maxSets = bestOf > 1 ? Math.floor((bestOf + 1) / 2) : 0;
+    const setsA = parseInt(setsAInput.value || '0', 10);
+    const setsB = parseInt(setsBInput.value || '0', 10);
+    
+    if (bestOf > 1) {
+      if (setsA > maxSets) {
+        e.preventDefault();
+        alert(`❌ Sets A no puede ser mayor a ${maxSets} para Best of ${bestOf}`);
+        return false;
+      }
+      if (setsB > maxSets) {
+        e.preventDefault();
+        alert(`❌ Sets B no puede ser mayor a ${maxSets} para Best of ${bestOf}`);
+        return false;
+      }
+    }
+  });
+});
+</script>
+{% endblock %}

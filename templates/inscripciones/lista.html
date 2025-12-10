@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% block title %}Inscripciones - {{ torneo.nombre }}{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+        <h2 class="h5 mb-1">Inscripciones - {{ torneo.nombre }}</h2>
+        <p class="text-muted small mb-0">Estado: <span class="badge bg-{% if torneo.estado == 'FINALIZADO' %}secondary{% elif torneo.estado == 'EN_CURSO' %}warning{% else %}success{% endif %}">{{ torneo.estado }}</span> | Cupos: {{ torneo.inscripciones_count }} / {{ torneo.cupos_max }}</p>
+    </div>
+    <div class="btn-group btn-group-sm">
+        <a href="{% url 'inscribir_jugador' torneo.id %}" class="btn btn-success">➕ Nueva</a>
+        {% if torneo.numero_grupos > 0 and torneo.estado == 'ABIERTO' %}
+        <a href="{% url 'generar_grupos' torneo.id %}" class="btn btn-primary" title="Generar grupos y comenzar fase">👥 Grupos</a>
+        {% endif %}
+        <a href="{% url 'lista_torneos' %}" class="btn btn-outline-secondary">← Torneos</a>
+    </div>
+</div>
+<div class="table-responsive shadow-sm rounded">
+    <table class="table align-middle mb-0 table-hover">
+        <thead class="table-dark">
+            <tr>
+                <th>Jugador</th>
+                <th>RUT</th>
+                <th>Categoría</th>
+                <th>Estado</th>
+                <th>Fecha</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for insc in inscripciones %}
+            <tr>
+                <td>{{ insc.jugador.nombre }} {{ insc.jugador.apellido }}</td>
+                <td><code>{{ insc.jugador.rut }}</code></td>
+                <td><span class="badge bg-{% if insc.jugador.categoria == 'FEDERADO' %}primary{% else %}secondary{% endif %}">{{ insc.jugador.categoria }}</span></td>
+                <td><span class="badge bg-{% if insc.estado == 'INSCRITO' %}success{% elif insc.estado == 'ESPERA' %}warning{% else %}secondary{% endif %}">{{ insc.estado }}</span></td>
+                <td class="text-muted small">{{ insc.fecha_inscripcion|date:"d/m/Y H:i" }}</td>
+            </tr>
+        {% empty %}
+            <tr><td colspan="5" class="text-center text-muted">Sin inscripciones todavía.</td></tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% block title %}Partidos - {{ torneo.nombre }}{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="h5 mb-0">Fixture - {{ torneo.nombre }}</h2>
+    <div class="btn-group btn-group-sm">
+        {% if torneo.numero_grupos > 0 %}
+        <a href="{% url 'lista_grupos' torneo.id %}" class="btn btn-outline-info">Ver Grupos</a>
+        {% endif %}
+        <a href="{% url 'bracket_visual' torneo.id %}" class="btn btn-outline-primary">Bracket Visual</a>
+        <a href="{% url 'generar_ronda_siguiente' torneo.id %}" class="btn btn-outline-success" onclick="return confirm('Generar siguiente ronda?')">Avanzar Ronda</a>
+        <a href="{% url 'lista_torneos' %}" class="btn btn-outline-secondary">← Torneos</a>
+    </div>
+</div>
+<p class="text-muted small">Estado: <span class="badge bg-{% if torneo.estado == 'FINALIZADO' %}secondary{% elif torneo.estado == 'EN_CURSO' %}warning{% else %}success{% endif %}">{{ torneo.estado }}</span></p>
+{% if partidos %}
+<div class="table-responsive shadow-sm rounded">
+    <table class="table align-middle mb-0 table-hover">
+        <thead class="table-dark">
+            <tr>
+                <th>Etapa</th>
+                <th>Ronda</th>
+                <th>Grupo</th>
+                <th>Jugador A</th>
+                <th>Jugador B</th>
+                <th>Sets</th>
+                <th>Ganador</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for p in partidos %}
+            <tr>
+                <td><span class="badge bg-{% if p.etapa == 'FINAL' %}danger{% elif p.etapa == 'ELIMINACION' %}warning{% else %}info{% endif %}">{{ p.etapa }}</span></td>
+                <td>{{ p.ronda }}</td>
+                <td>{% if p.grupo %}{{ p.grupo }}{% else %}-{% endif %}</td>
+                <td>{{ p.jugador_a }}</td>
+                <td>{{ p.jugador_b }}</td>
+                <td>{% if p.sets_a is not None %}{{ p.sets_a }} - {{ p.sets_b }}{% else %}<span class="text-muted small">Pendiente</span>{% endif %}</td>
+                <td>{% if p.ganador %}<strong>{{ p.ganador }}</strong>{% else %}<span class="text-muted small">-</span>{% endif %}</td>
+                <td><a href="{% url 'editar_partido' p.id %}" class="btn btn-sm btn-outline-primary">Editar</a></td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<div class="alert alert-info">
+    <p class="mb-2">No hay partidos generados aún.</p>
+    {% if torneo.numero_grupos > 0 %}
+    <a href="{% url 'generar_grupos' torneo.id %}" class="btn btn-primary btn-sm">Generar Grupos</a>
+    {% else %}
+    <a href="{% url 'generar_fixture' torneo.id %}" class="btn btn-primary btn-sm">Generar Fixture</a>
+    {% endif %}
+</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% block title %}Resultados - SmashPoint{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="h4 mb-0">Resultados de Torneos</h2>
+    {% if es_admin %}
+        <a href="{% url 'agregar_resultado' %}" class="btn btn-success btn-sm">➕ Registrar Resultado</a>
+    {% endif %}
+</div>
+<div class="table-responsive shadow-sm rounded">
+    <table class="table align-middle mb-0 table-hover">
+        <thead class="table-dark">
+            <tr>
+                <th>ID</th>
+                <th>Torneo</th>
+                <th>Jugador 1</th>
+                <th>Jugador 2</th>
+                <th>Marcador</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for r in resultados %}
+            <tr>
+                <td class="text-muted">{{ r.id }}</td>
+                <td>{{ r.torneo.nombre }}</td>
+                <td>{{ r.jugador1.nombre }} {{ r.jugador1.apellido }}</td>
+                <td>{{ r.jugador2.nombre }} {{ r.jugador2.apellido }}</td>
+                <td>
+                    <span class="badge bg-{% if r.marcador_j1 > r.marcador_j2 %}success{% else %}danger{% endif %}">{{ r.marcador_j1 }} - {{ r.marcador_j2 }}</span>
+                </td>
+                <td>
+                    {% if es_admin %}
+                    <div class="btn-group btn-group-sm" role="group">
+                        <a href="{% url 'editar_resultado' r.id %}" class="btn btn-outline-warning">Editar</a>
+                        <a href="{% url 'eliminar_resultado' r.id %}" class="btn btn-outline-danger" onclick="return confirm('¿Eliminar resultado?')">Eliminar</a>
+                    </div>
+                    {% else %}<span class="text-muted small">-</span>{% endif %}
+                </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="6" class="text-center text-muted">Sin resultados.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

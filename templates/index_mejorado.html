@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard - SmashPoint{% endblock %}
+{% block content %}
+<div class="row mb-4">
+  <div class="col-12">
+    <h2 class="h4 mb-3">Bienvenido, {{ user.username }}</h2>
+  </div>
+</div>
+
+<div class="row g-3 mb-4">
+  <div class="col-md-4">
+    <div class="card shadow-sm border-primary">
+      <div class="card-body text-center">
+        <h5 class="card-title text-primary">🏓 Torneos Activos</h5>
+        <p class="display-4 mb-0">{{ torneos_activos }}</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card shadow-sm border-success">
+      <div class="card-body text-center">
+        <h5 class="card-title text-success">👥 Jugadores Registrados</h5>
+        <p class="display-4 mb-0">{{ jugadores_total }}</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card shadow-sm border-warning">
+      <div class="card-body text-center">
+        <h5 class="card-title text-warning">🎯 Partidos Hoy</h5>
+        <p class="display-4 mb-0">{{ partidos_hoy }}</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% if ultimo_campeon %}
+<div class="alert alert-success shadow-sm">
+  <h6 class="alert-heading">🏆 Último Campeón</h6>
+  <p class="mb-0"><strong>{{ ultimo_campeon.nombre }} {{ ultimo_campeon.apellido }}</strong> - {{ ultimo_campeon.torneo }}</p>
+</div>
+{% endif %}
+
+<div class="row g-3">
+  <div class="col-md-6">
+    <div class="card shadow-sm">
+      <div class="card-header py-2"><strong>Acceso Rápido</strong></div>
+      <div class="list-group list-group-flush">
+        <a href="{% url 'lista_torneos' %}" class="list-group-item list-group-item-action">🏓 Ver Torneos</a>
+        <a href="{% url 'lista_jugadores' %}" class="list-group-item list-group-item-action">👥 Ver Jugadores</a>
+        <a href="{% url 'ranking_public' %}" class="list-group-item list-group-item-action">🏆 Ver Ranking</a>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="card shadow-sm">
+      <div class="card-header py-2"><strong>Top 5 Ranking</strong></div>
+      <div class="list-group list-group-flush">
+        {% for rk in top_ranking %}
+        <div class="list-group-item d-flex justify-content-between align-items-center">
+          <span>{{ forloop.counter }}. {{ rk.jugador.nombre }} {{ rk.jugador.apellido }}</span>
+          <span class="badge bg-primary rounded-pill">{{ rk.puntos }} pts</span>
+        </div>
+        {% empty %}
+        <div class="list-group-item text-muted text-center small">Sin datos de ranking.</div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
