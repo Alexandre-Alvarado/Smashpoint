@@ -32,7 +32,8 @@ ALLOWED_HOSTS = [
     '127.0.0.1',
 ]
 
-
+# Login configuration
+LOGIN_URL = '/'
 
 # Application definition
 

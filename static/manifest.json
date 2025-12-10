@@ -1,10 +1,11 @@
 {
   "name": "SmashPoint",
   "short_name": "SmashPoint",
-  "start_url": "/public/scoreboard/",
+  "description": "Sistema de gestión de torneos de badminton",
+  "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
-  "theme_color": "#1e90ff",
+  "theme_color": "#1a1a1a",
   "scope": "/",
   "icons": [
     {"src": "/static/icons/icon-192.png", "sizes": "192x192", "type": "image/png"},
