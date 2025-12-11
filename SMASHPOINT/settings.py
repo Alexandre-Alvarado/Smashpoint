@@ -87,7 +87,7 @@ WSGI_APPLICATION = 'SMASHPOINT.wsgi.application'
 
 DATABASES = {
     'default': dj_database_url.config(
-        default="postgresql://smashpoint_db_user:cqzs7jrI3S7cBX7qAndl5Q68eE8RbpkB@dpg-d4t3b549c44c73besne0-a/smashpoint_db",
+        default="postgresql://smashpoint_db_user:cqzs7jrI3S7cBX7qAndl5Q68eE8RbpkB@dpg-d4t3b549c44c73besne0-a/smashpoint_db?sslmode=require",
         conn_max_age=600,
         ssl_require=True,
     )
