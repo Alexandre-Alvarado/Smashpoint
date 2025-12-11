@@ -545,7 +545,7 @@ Este proyecto está bajo la Licencia MIT. Ver archivo `LICENSE` para más detall
 ---
 
 ## 👤 Autor
-
+**Brayan Álvarez**
 **Alexandre Alvarado**
 - GitHub: [@Alexandre-Alvarado](https://github.com/Alexandre-Alvarado)
 - Proyecto: [SmashPoint](https://github.com/Alexandre-Alvarado/Smashpoint)

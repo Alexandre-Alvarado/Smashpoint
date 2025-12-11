@@ -17,6 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from smashpointApp import views
+from smashpointApp import mobile_views
 from rest_framework.routers import DefaultRouter
 from smashpointApp.api import (
     JugadorViewSet, TorneoViewSet, ResultadoViewSet,
@@ -85,10 +86,19 @@ urlpatterns = [
     path('export/ranking/pdf/', views.export_ranking_pdf, name='export_ranking_pdf'),
     path('export/ranking/excel/', views.export_ranking_excel, name='export_ranking_excel'),
 
-    # API JSON
+    # API JSON (Legacy)
     path('api/jugadores/', views.api_jugadores, name='api_jugadores'),
     path('api/torneos/', views.api_torneos, name='api_torneos'),
     path('api/ranking/', views.api_ranking, name='api_ranking'),
+
+    # API Mobile (React Native) - CamelCase
+    path('api/tournaments/', mobile_views.mobile_tournaments, name='mobile_tournaments'),
+    path('api/tournaments/<int:tournament_id>/', mobile_views.mobile_tournament_detail, name='mobile_tournament_detail'),
+    path('api/tournaments/<int:tournament_id>/matches/', mobile_views.mobile_tournament_matches, name='mobile_tournament_matches'),
+    path('api/tournaments/<int:tournament_id>/players/', mobile_views.mobile_tournament_players, name='mobile_tournament_players'),
+    path('api/players/', mobile_views.mobile_players, name='mobile_players'),
+    path('api/results/', mobile_views.mobile_results, name='mobile_results'),
+    path('api/matches/finish/', mobile_views.mobile_finish_match, name='mobile_finish_match'),
 
     # Offline
     path('offline/', views.offline, name='offline'),
