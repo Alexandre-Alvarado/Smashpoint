@@ -1,6 +1,7 @@
 """
 API Serializers para App Móvil con camelCase
 Estos serializers están diseñados específicamente para la integración con React Native
+Updated: 2025-12-11
 """
 from rest_framework import serializers
 from .models import Torneo, Jugador, Partido, Inscripcion, Resultado
