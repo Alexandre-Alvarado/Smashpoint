@@ -160,3 +160,8 @@ REST_FRAMEWORK = {
 
 # CORS configuration for mobile/frontends
 CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:19006",  # Expo/React Native
+    "https://smashpoint-7ofo.onrender.com",
+]
