@@ -24,7 +24,7 @@ class MobileTournamentSerializer(serializers.ModelSerializer):
         return {
             'id': str(ret['id']),
             'name': ret['nombre'],
-            'date': str(ret['fecha']) if ret['fecha'] else '',
+            'date': str(ret['fecha']) if ret['fecha'] else 'Fecha Pendiente',
             'location': ret['direccion'],
             'status': ret['estado'],
             'registeredCount': ret['registered_count']
